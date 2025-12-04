@@ -7,6 +7,7 @@ import cors from "cors";
 
 import productRoutes from "./routes/productRoutes.js";
 import authRoutes from "./routes/authroutes.js";
+import orderRoutes from "./routes/orderRoutes.js";
 
 const app = express();
 
@@ -20,6 +21,7 @@ mongoose
 
 app.use("/api", productRoutes);
 app.use("/api", authRoutes);
+app.use("/api", orderRoutes);
 
 app.get("/", (req, res) => res.send("Auth backend running"));
 
