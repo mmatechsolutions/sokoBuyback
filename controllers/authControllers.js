@@ -2,7 +2,6 @@ import User from "../Schemas/userSchema.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
-// SIGNUP
 export const signup = async (req, res) => {
   try {
     const { firstName, lastName, dob, gender, phone, email, password } =
@@ -27,8 +26,6 @@ export const signup = async (req, res) => {
         .json({ message: "User with email or phone already exists" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
     const newUser = new User({
       firstName,
       lastName,
@@ -36,7 +33,7 @@ export const signup = async (req, res) => {
       gender,
       phone,
       email,
-      password: hashedPassword,
+      password: password,
     });
 
     await newUser.save();

@@ -8,6 +8,7 @@ import cors from "cors";
 import productRoutes from "./routes/productRoutes.js";
 import authRoutes from "./routes/authroutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
+import adminStatsRoutes from "./routes/adminstatsroutes.js";
 
 const app = express();
 
@@ -22,8 +23,15 @@ mongoose
 app.use("/api", productRoutes);
 app.use("/api", authRoutes);
 app.use("/api", orderRoutes);
+app.use("/api/admin/stats", adminStatsRoutes);
+app.get("/", (req, res) => {
+  console.log("Health check endpoint hit at", new Date().toISOString());
+  res.json({ status: "ok", timestamp: new Date().toISOString() });
+});
 
-app.get("/", (req, res) => res.send("Auth backend running"));
+setInterval(() => {
+  console.log("API is alive -", new Date().toISOString());
+}, 3 * 60 * 1000); // 3 minutes in milliseconds
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -7,6 +7,7 @@ const OrderSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+
     items: [
       {
         _id: { type: String, required: true },
@@ -15,7 +16,43 @@ const OrderSchema = new mongoose.Schema(
         quantity: { type: Number, required: true },
       },
     ],
+
     total: { type: Number, required: true },
+
+    // ============================
+    // ORDER STATUS TRACKING
+    // ============================
+
+    status: {
+      type: String,
+      enum: [
+        "pending", // user created order but not processed
+        "processing", // payment confirmed, preparing order
+        "shipped", // order dispatched
+        "delivered", // customer received order
+        "cancelled", // order cancelled
+      ],
+      default: "pending",
+    },
+
+    // History of stage changes
+    statusHistory: [
+      {
+        status: { type: String },
+        message: { type: String }, // Optional: "Shipped via G4S"
+        updatedAt: { type: Date, default: Date.now },
+      },
+    ],
+
+    // Optional shipping information
+    shipping: {
+      address: { type: String },
+      city: { type: String },
+      phone: { type: String },
+      trackingNumber: { type: String },
+      courier: { type: String }, // e.g., "G4S", "Fargo", "Posta"
+    },
+
     date: { type: Date, default: Date.now },
   },
   { timestamps: true }

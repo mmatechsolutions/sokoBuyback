@@ -39,4 +39,39 @@ router.get("/orders", protect, async (req, res) => {
   }
 });
 
+router.patch("/:id/status", protect, async (req, res) => {
+  try {
+    const { status, message } = req.body;
+
+    if (!status) {
+      return res.status(400).json({ message: "Status is required" });
+    }
+
+    const order = await Order.findById(req.params.id);
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    // Update order status
+    order.status = status;
+
+    // Push history update entry
+    order.statusHistory.push({
+      status,
+      message: message || "",
+      updatedAt: new Date(),
+    });
+
+    await order.save();
+
+    res.json({
+      message: "Order status updated successfully",
+      order,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 export default router;
