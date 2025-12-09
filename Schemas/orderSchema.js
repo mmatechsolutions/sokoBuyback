@@ -8,6 +8,7 @@ const OrderSchema = new mongoose.Schema(
       required: true,
     },
 
+    // Items in the order
     items: [
       {
         _id: { type: String, required: true },
@@ -17,21 +18,26 @@ const OrderSchema = new mongoose.Schema(
       },
     ],
 
-    total: { type: Number, required: true },
+    // Totals
+    total: { type: Number, required: true }, // Cart subtotal
+    deliveryFee: { type: Number, required: true }, // Fee based on county
+    grandTotal: { type: Number, required: true }, // total + delivery
+
+    // Customer information (auto-filled from context)
+    customer: {
+      name: { type: String, required: true },
+      phone: { type: String, required: true },
+      email: { type: String, required: true },
+      county: { type: String, required: true },
+      localTown: { type: String, required: true },
+    },
 
     // ============================
     // ORDER STATUS TRACKING
     // ============================
-
     status: {
       type: String,
-      enum: [
-        "pending", // user created order but not processed
-        "processing", // payment confirmed, preparing order
-        "shipped", // order dispatched
-        "delivered", // customer received order
-        "cancelled", // order cancelled
-      ],
+      enum: ["pending", "processing", "shipped", "delivered", "cancelled"],
       default: "pending",
     },
 
@@ -44,7 +50,7 @@ const OrderSchema = new mongoose.Schema(
       },
     ],
 
-    // Optional shipping information
+    // Optional shipping information (can be filled later)
     shipping: {
       address: { type: String },
       city: { type: String },
@@ -53,6 +59,7 @@ const OrderSchema = new mongoose.Schema(
       courier: { type: String }, // e.g., "G4S", "Fargo", "Posta"
     },
 
+    // Order creation date
     date: { type: Date, default: Date.now },
   },
   { timestamps: true }

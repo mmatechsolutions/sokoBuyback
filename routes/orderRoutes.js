@@ -4,22 +4,28 @@ import { protect } from "../middleware/authmiddleware.js";
 
 const router = express.Router();
 
-// Checkout (create order)
 router.post("/checkout", protect, async (req, res) => {
   try {
-    const { items, total } = req.body;
+    const { cart, total, deliveryFee, grandTotal, customer } = req.body;
 
-    if (!items || items.length === 0)
+    if (!cart || cart.length === 0)
       return res.status(400).json({ message: "Cart is empty" });
 
     const order = new Order({
-      userId: req.user.id, // link order to logged-in user
-      items,
+      userId: req.user.id,
+      items: cart,
       total,
+      deliveryFee,
+      grandTotal,
+      customer,
     });
 
     await order.save();
-    res.status(201).json({ message: "Order placed successfully", order });
+    res.status(201).json({
+      message: "Order placed successfully",
+      orderId: order._id,
+      order,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
@@ -32,6 +38,16 @@ router.get("/orders", protect, async (req, res) => {
     const orders = await Order.find({ userId: req.user.id }).sort({
       createdAt: -1,
     });
+    res.json(orders);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.get("/admin/orders", protect, async (req, res) => {
+  try {
+    const orders = await Order.find().sort({ createdAt: -1 });
     res.json(orders);
   } catch (err) {
     console.error(err);

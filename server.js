@@ -9,6 +9,7 @@ import productRoutes from "./routes/productRoutes.js";
 import authRoutes from "./routes/authroutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import adminStatsRoutes from "./routes/adminstatsroutes.js";
+import paymentRoutes from "./routes/payment.js";
 
 const app = express();
 
@@ -23,6 +24,7 @@ mongoose
 app.use("/api", productRoutes);
 app.use("/api", authRoutes);
 app.use("/api", orderRoutes);
+app.use("/api", paymentRoutes);
 app.use("/api/admin/stats", adminStatsRoutes);
 app.get("/", (req, res) => {
   console.log("Health check endpoint hit at", new Date().toISOString());
